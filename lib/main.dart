@@ -50,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: (){
                 Navigator.pushNamed(context, "/add_person");
               },
-              child: new Text("Add Name"),
+              child: new Text("Add Name in Firebase"),
               color: Colors.blue,
             ),
             new MaterialButton(
@@ -79,15 +79,18 @@ class _MyHomePageState extends State<MyHomePage> {
       if(!mounted){return;}
       setState(() {
         _reader = reader;
-        if(_reader.isNotEmpty) {
-          PersonDao.getUsersByName(_reader, (arrData){
+      });
+
+      if(_reader.isNotEmpty) {
+        PersonDao.getUsersByName(_reader, (arrData){
+          setState(() {
             if(arrData != null) {
               // person exists
               existsDb = true;
             }
           });
-        }
-      });
+        });
+      }
     } on PlatformException catch(e) {
       if(e.code == BarcodeScanner.CameraAccessDenied) {
         _reader = "camera access denied";

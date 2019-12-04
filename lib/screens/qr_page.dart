@@ -33,7 +33,7 @@ class _qr_pageState extends State<qr_page> {
             AlertDialog(title: new Text("Added"), content: new Text("New Person added."));
             setState(() {
               qr = new QrImage(
-                data: "1234567890",
+                data: "${fname.text} ${lname.text}",
                 version: QrVersions.auto,
                 size: 200.0,
               );
