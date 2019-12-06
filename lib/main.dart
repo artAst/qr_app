@@ -35,9 +35,32 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _reader = "";
   bool existsDb = false;
+  bool isRegistered = false;
+  int countRegistered = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    PersonDao.getCount().then((cnt){
+      setState(() {
+        if(cnt != null) {
+          countRegistered = cnt;
+        }
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    String compReg = "";
+    if(_reader.isNotEmpty && existsDb) {
+      if(!isRegistered) {
+        compReg = "Complete Registration.";
+      } else {
+        compReg = "Already Registered.";
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("QR SCANNER"),
@@ -66,14 +89,31 @@ class _MyHomePageState extends State<MyHomePage> {
               color: Colors.blue,
             ),
             Text("QR DATA: $_reader", softWrap: true, style: TextStyle(fontSize: 20.0)),
-            Text("Exists in DB: $existsDb", softWrap: true, style: TextStyle(fontSize: 20.0))
+            Text("Exists in DB: $existsDb", softWrap: true, style: TextStyle(fontSize: 20.0)),
+            Text(compReg, softWrap: true, style: TextStyle(fontSize: 20.0)),
           ],
         ),
+      ),
+      bottomNavigationBar: new Container(
+        padding: const EdgeInsets.only(bottom: 10.0, right: 10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            new Text("Registered: $countRegistered", style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.w600)),
+          ],
+        )
       ),
     );
   }
 
+  clearData() {
+    print("DATA CLEARED");
+      existsDb = false;
+      isRegistered = false;
+  }
+
   scan() async {
+
     try {
       String reader = await BarcodeScanner.scan();
       if(!mounted){return;}
@@ -87,6 +127,11 @@ class _MyHomePageState extends State<MyHomePage> {
             if(arrData != null) {
               // person exists
               existsDb = true;
+              isRegistered = arrData["registered"];
+              countRegistered = arrData["count"];
+              print("count: $countRegistered");
+            } else {
+              clearData();
             }
           });
         });
