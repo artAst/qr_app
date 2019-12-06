@@ -64,6 +64,14 @@ class PersonDao {
           ctr += 1;
           conf.child("count").set(ctr);
           return ctr;
+        } else if(data.value is String) {
+          int ctr = 0;
+          if(data.value.toString().isNotEmpty) {
+            ctr = int.parse(data.value);
+          }
+          ctr += 1;
+          conf.child("count").set(ctr);
+          return ctr;
         } else {
           return data.value;
         }
